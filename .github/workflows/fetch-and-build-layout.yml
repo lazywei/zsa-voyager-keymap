@@ -63,21 +63,30 @@ jobs:
       - name: Commit and Push changes
         env:
           CHANGE_DESCRIPTION: ${{ steps.download-layout-source.outputs.change_description }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           git config --local user.name "github-actions"
           git config --local user.email "github-actions@github.com"
           git add .
-          printf "✨(oryx): %s\n" "$CHANGE_DESCRIPTION" | git commit -F - || echo "No layout change"
-          git push
+          if git diff --staged --quiet; then
+            echo "No layout change"
+          else
+            printf "✨(oryx): %s\n" "$CHANGE_DESCRIPTION" | git commit -F -
+            git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:oryx
+          fi
 
       - name: Merge Oryx with custom QMK
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           git fetch origin main
           git checkout -B main origin/main
           git merge -Xignore-all-space oryx
-          git push
+          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:main
 
       - name: Update QMK firmware submodule to latest version (${{ steps.download-layout-source.outputs.firmware_version }})
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           git submodule update --init --remote --depth=1 --no-single-branch
           cd qmk_firmware
@@ -85,8 +94,12 @@ jobs:
           git submodule update --init --recursive
           cd ..
           git add qmk_firmware
-          git commit -m "✨(qmk): Update firmware" || echo "No QMK change"
-          git push
+          if git diff --staged --quiet; then
+            echo "No QMK change"
+          else
+            git commit -m "✨(qmk): Update firmware"
+            git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:main
+          fi
 
       - name: Build qmk docker image
         run: docker build -t qmk .
