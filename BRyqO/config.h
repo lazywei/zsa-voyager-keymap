@@ -8,22 +8,13 @@
 #define RGB_MATRIX_TIMEOUT 600000
 
 #define USB_SUSPEND_WAKEUP_DELAY 0
-#define SERIAL_NUMBER "BRyqO/7vRXJx"
+#define SERIAL_NUMBER "BRyqO/x9B3qL"
 #define LAYER_STATE_8BIT
 #define HCS(report)                                                            \
   host_consumer_send(record->event.pressed ? report : 0);                      \
   return false
 
 #define TAPPING_TERM_PER_KEY
-#define WHEEL_EXTENDED_SUPPORT
-#define POINTING_DEVICE_HIRES_SCROLL_ENABLE
-#define POINTING_DEVICE_HIRES_SCROLL_EXPONENT 1
-#define POINTING_DEVICE_GESTURES_CURSOR_GLIDE_ENABLE
-#define MOUSE_EXTENDED_REPORT
-#define NAVIGATOR_SCROLL_DIVIDER 50 
-
-#define NAVIGATOR_SCROLL_INVERT_X
-#define NAVIGATOR_SCROLL_INVERT_Y
 #define RGB_MATRIX_STARTUP_SPD 60
 
 #undef ENABLE_RGB_MATRIX_ALPHAS_MODS
